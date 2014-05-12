@@ -46,13 +46,10 @@ public class BTClient extends Activity {
 	private InputStream is;    //输入流，用来接收蓝牙数据
 	//private TextView text0;    //提示栏解句柄
     private EditText edit0;    //发送数据输入句柄
-    private TextView dis;       //接收数据显示句柄
+    private TextView result_text;       //接收数据显示句柄
     private ScrollView sv;      //翻页句柄
     private String smsg = "";    //显示用数据缓存
     private String fmsg = "";    //保存用数据缓存
-    
-    
-    
 
     public String filename=""; //用来保存存储的文件名
     BluetoothDevice _device = null;     //蓝牙设备
@@ -75,7 +72,7 @@ public class BTClient extends Activity {
         //text0 = (TextView)findViewById(R.id.Text0);  //得到提示栏句柄
         edit0 = (EditText)findViewById(R.id.Edit0);   //得到输入框句柄
         sv = (ScrollView)findViewById(R.id.ScrollView01);  //得到翻页句柄
-        dis = (TextView) findViewById(R.id.in);      //得到数据显示句柄
+        result_text = (TextView) findViewById(R.id.in);      //得到数据显示句柄
 
        //如果打开本地蓝牙设备不成功，提示信息，结束程序
         if (_bluetooth == null){
@@ -209,7 +206,7 @@ public class BTClient extends Activity {
     						n++;
     					}
     					String s = new String(buffer_new,0,n);
-    					smsg+=s;   //写入接收缓存
+    					smsg=s;   //写入接收缓存
     					if(is.available()==0)break;  //短时间没有数据才跳出进行显示
     				}
     				//发送显示消息，进行显示刷新
@@ -224,7 +221,7 @@ public class BTClient extends Activity {
     Handler handler= new Handler(){
     	public void handleMessage(Message msg){
     		super.handleMessage(msg);
-    		dis.setText(smsg);   //显示数据 
+    		result_text.setText(smsg);   //显示数据 
     		float value = Float.valueOf(smsg);
           	try {
           		AsyncHttp.makePostRequest(getBaseContext(), value);
@@ -234,7 +231,7 @@ public class BTClient extends Activity {
 					e.printStackTrace();
 				//	text_result.setText("Failed Sent");
 				}
-    		sv.scrollTo(0,dis.getMeasuredHeight()); //跳至数据最后一页
+    		sv.scrollTo(0,result_text.getMeasuredHeight()); //跳至数据最后一页
     	}
     };
     
@@ -319,7 +316,7 @@ public class BTClient extends Activity {
     public void onClearButtonClicked(View v){
     	smsg="";
     	fmsg="";
-    	dis.setText(smsg);
+    	result_text.setText(smsg);
     	return;
     }
     
