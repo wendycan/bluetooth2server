@@ -10,7 +10,8 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import com.test.BTClient.DeviceListActivity;
-
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -18,6 +19,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -33,6 +35,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+@TargetApi(Build.VERSION_CODES.ECLAIR)
+@SuppressLint("NewApi")
 public class BTClient extends Activity {
 	
 	private final static int REQUEST_CONNECT_DEVICE = 1;    //宏定义查询设备句柄
@@ -62,7 +66,8 @@ public class BTClient extends Activity {
 	
 	
     /** Called when the activity is first created. */
-    @Override
+    @SuppressLint("NewApi")
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);   //设置画面为主画面 main.xml
@@ -220,6 +225,15 @@ public class BTClient extends Activity {
     	public void handleMessage(Message msg){
     		super.handleMessage(msg);
     		dis.setText(smsg);   //显示数据 
+    		float value = Float.valueOf(smsg);
+          	try {
+          		AsyncHttp.makePostRequest(getBaseContext(), value);
+          		//text_result.setText("Succesfully Sent");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				//	text_result.setText("Failed Sent");
+				}
     		sv.scrollTo(0,dis.getMeasuredHeight()); //跳至数据最后一页
     	}
     };
