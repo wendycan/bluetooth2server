@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import com.test.BTClient.DeviceListActivity;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -24,6 +25,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 //import android.view.Menu;            //如使用菜单加入此三包
 //import android.view.MenuInflater;
@@ -221,7 +223,9 @@ public class BTClient extends Activity {
     Handler handler= new Handler(){
     	public void handleMessage(Message msg){
     		super.handleMessage(msg);
-    		result_text.setText(smsg);   //显示数据 
+    		result_text.setText(smsg);   //显示数据
+    		Log.i("result", smsg);
+    		String m = smsg;
     		float value = Float.valueOf(smsg);
           	try {
           		AsyncHttp.makePostRequest(getBaseContext(), value);
