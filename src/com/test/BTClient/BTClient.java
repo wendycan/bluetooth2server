@@ -228,8 +228,8 @@ public class BTClient extends Activity {
     Handler handler= new Handler(){
     	public void handleMessage(Message msg){
     		super.handleMessage(msg);
-    		result_text.setText(smsg);   //��ʾ���
-    		result_text.setText("/");
+    		result_text.append(smsg);   //��ʾ���
+    		result_text.append("/");
     		String msg0 = smsg;
         	float value = 0;
         	String tmp = "";
