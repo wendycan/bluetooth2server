@@ -257,7 +257,7 @@ public class BTClient extends Activity {
         					value = Float.valueOf(tmp);
         					m++;
         					t_v.setTime(t_ms+13*m);
-        					String t_iso = df.format(t);
+        					String t_iso = df.format(t_v);
         					try {
             					tmp = "";
 //            					Date data =new Date();
