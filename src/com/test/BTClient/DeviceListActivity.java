@@ -16,6 +16,8 @@
 
 package com.test.BTClient;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -23,6 +25,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,15 +39,17 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 
+@TargetApi(Build.VERSION_CODES.ECLAIR)
+@SuppressLint("NewApi")
 public class DeviceListActivity extends Activity {
-    // µ÷ÊÔÓÃ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private static final String TAG = "DeviceListActivity";
     private static final boolean D = true;
 
-    // ·µ»ØÊ±Êý¾Ý±êÇ©
-    public static String EXTRA_DEVICE_ADDRESS = "Éè±¸µØÖ·";
+    // ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ý±ï¿½Ç©
+    public static String EXTRA_DEVICE_ADDRESS = "ï¿½è±¸ï¿½ï¿½Ö·";
 
-    // ³ÉÔ±Óò
+    // ï¿½ï¿½Ô±ï¿½ï¿½
     private BluetoothAdapter mBtAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
@@ -52,15 +57,14 @@ public class DeviceListActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // ´´½¨²¢ÏÔÊ¾´°¿Ú
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);  //ÉèÖÃ´°¿ÚÏÔÊ¾Ä£Ê½Îª´°¿Ú·½Ê½
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);  //ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾Ä£Ê½Îªï¿½ï¿½ï¿½Ú·ï¿½Ê½
         setContentView(R.layout.device_list);
 
-        // Éè¶¨Ä¬ÈÏ·µ»ØÖµÎªÈ¡Ïû
+        // ï¿½è¶¨Ä¬ï¿½Ï·ï¿½ï¿½ï¿½ÖµÎªÈ¡ï¿½ï¿½
         setResult(Activity.RESULT_CANCELED);
 
-        // Éè¶¨É¨Ãè°´¼üÏìÓ¦
+        // ï¿½è¶¨É¨ï¿½è°´ï¿½ï¿½ï¿½ï¿½Ó¦
         Button scanButton = (Button) findViewById(R.id.button_scan);
         scanButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -69,36 +73,36 @@ public class DeviceListActivity extends Activity {
             }
         });
 
-        // ³õÊ¹»¯Éè±¸´æ´¢Êý×é
+        // ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½è±¸ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½
         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
         mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
 
-        // ÉèÖÃÒÑÅä¶ÓÉè±¸ÁÐ±í
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½Ð±ï¿½
         
         ListView pairedListView = (ListView) findViewById(R.id.paired_devices);
         pairedListView.setAdapter(mPairedDevicesArrayAdapter);
         pairedListView.setOnItemClickListener(mDeviceClickListener);
 
-        // ÉèÖÃÐÂ²éÕÒÉè±¸ÁÐ±í
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½ï¿½è±¸ï¿½Ð±ï¿½
         ListView newDevicesListView = (ListView) findViewById(R.id.new_devices);
         newDevicesListView.setAdapter(mNewDevicesArrayAdapter);
         newDevicesListView.setOnItemClickListener(mDeviceClickListener);
 
-        // ×¢²á½ÓÊÕ²éÕÒµ½Éè±¸action½ÓÊÕÆ÷
+        // ×¢ï¿½ï¿½ï¿½ï¿½Õ²ï¿½ï¿½Òµï¿½ï¿½è±¸actionï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.registerReceiver(mReceiver, filter);
 
-        // ×¢²á²éÕÒ½áÊøaction½ÓÊÕÆ÷
+        // ×¢ï¿½ï¿½ï¿½ï¿½Ò½ï¿½ï¿½ï¿½actionï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(mReceiver, filter);
 
-        // µÃµ½±¾µØÀ¶ÑÀ¾ä±ú
+        // ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // µÃµ½ÒÑÅä¶ÔÀ¶ÑÀÉè±¸ÁÐ±í
+        // ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½Ð±ï¿½
         //Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
 
-        // Ìí¼ÓÒÑÅä¶ÔÉè±¸µ½ÁÐ±í²¢ÏÔÊ¾ 
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½Ð±?ï¿½ï¿½Ê¾ 
        // if (pairedDevices.size() > 0) {
            // findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
         //    for (BluetoothDevice device : pairedDevices) {
@@ -110,16 +114,17 @@ public class DeviceListActivity extends Activity {
        // }
     }
 
-    @Override
+    @SuppressLint("NewApi")
+	@Override
     protected void onDestroy() {
         super.onDestroy();
 
-        // ¹Ø±Õ·þÎñ²éÕÒ
+        // ï¿½Ø±Õ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (mBtAdapter != null) {
             mBtAdapter.cancelDiscovery();
         }
 
-        // ×¢Ïúaction½ÓÊÕÆ÷
+        // ×¢ï¿½ï¿½actionï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         this.unregisterReceiver(mReceiver);
     }
     
@@ -127,68 +132,73 @@ public class DeviceListActivity extends Activity {
     	finish();
     }
     /**
-     * ¿ªÊ¼·þÎñºÍÉè±¸²éÕÒ
+     * ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
      */
-    private void doDiscovery() {
+    @SuppressLint("NewApi")
+	private void doDiscovery() {
         if (D) Log.d(TAG, "doDiscovery()");
 
-        // ÔÚ´°¿ÚÏÔÊ¾²éÕÒÖÐÐÅÏ¢
+        // ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
         setProgressBarIndeterminateVisibility(true);
-        setTitle("²éÕÒÉè±¸ÖÐ...");
+        setTitle("ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½...");
 
-        // ÏÔÊ¾ÆäËüÉè±¸£¨Î´Åä¶ÔÉè±¸£©ÁÐ±í
+        // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½Ð±ï¿½
         findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
 
-        // ¹Ø±ÕÔÙ½øÐÐµÄ·þÎñ²éÕÒ
+        // ï¿½Ø±ï¿½ï¿½Ù½ï¿½ï¿½ÐµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (mBtAdapter.isDiscovering()) {
             mBtAdapter.cancelDiscovery();
         }
-        //²¢ÖØÐÂ¿ªÊ¼
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Â¿ï¿½Ê¼
         mBtAdapter.startDiscovery();
     }
 
-    // Ñ¡ÔñÉè±¸ÏìÓ¦º¯Êý 
-    private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
+    // Ñ¡ï¿½ï¿½ï¿½è±¸ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ 
+    @SuppressLint("NewApi")
+	private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-            // ×¼±¸Á¬½ÓÉè±¸£¬¹Ø±Õ·þÎñ²éÕÒ
+            // ×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½Ø±Õ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             mBtAdapter.cancelDiscovery();
 
-            // µÃµ½macµØÖ·
+            // ï¿½Ãµï¿½macï¿½ï¿½Ö·
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
 
-            // ÉèÖÃ·µ»ØÊý¾Ý
+            // ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             Intent intent = new Intent();
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
-            // ÉèÖÃ·µ»ØÖµ²¢½áÊø³ÌÐò
+            // ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             setResult(Activity.RESULT_OK, intent);
             finish();
         }
     };
 
-    // ²éÕÒµ½Éè±¸ºÍËÑË÷Íê³Éaction¼àÌýÆ÷
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
+    // ï¿½ï¿½ï¿½Òµï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½actionï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    @SuppressLint("NewApi")
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @TargetApi(Build.VERSION_CODES.ECLAIR)
+		@SuppressLint("NewApi")
+		@Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            // ²éÕÒµ½Éè±¸action
+            // ï¿½ï¿½ï¿½Òµï¿½ï¿½è±¸action
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // µÃµ½À¶ÑÀÉè±¸
+                // ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Èç¹ûÊÇÒÑÅä¶ÔµÄÔòÂÔ¹ý£¬ÒÑµÃµ½ÏÔÊ¾£¬ÆäÓàµÄÔÚÌí¼Óµ½ÁÐ±íÖÐ½øÐÐÏÔÊ¾
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½Ô¹ï¿½ï¿½ÑµÃµï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½Ð±ï¿½ï¿½Ð½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                     mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                }else{  //Ìí¼Óµ½ÒÑÅä¶ÔÉè±¸ÁÐ±í
+                }else{  //ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½Ð±ï¿½
                 	mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
-            // ËÑË÷Íê³Éaction
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½action
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 setProgressBarIndeterminateVisibility(false);
-                setTitle("Ñ¡ÔñÒªÁ¬½ÓµÄÉè±¸");
+                setTitle("Ñ¡ï¿½ï¿½Òªï¿½ï¿½ï¿½Óµï¿½ï¿½è±¸");
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
-                    String noDevices = "Ã»ÓÐÕÒµ½ÐÂÉè±¸";
+                    String noDevices = "Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½è±¸";
                     mNewDevicesArrayAdapter.add(noDevices);
                 }
              //   if(mPairedDevicesArrayAdapter.getCount() > 0)

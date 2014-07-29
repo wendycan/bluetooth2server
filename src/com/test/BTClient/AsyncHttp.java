@@ -23,13 +23,14 @@ public class AsyncHttp {
             }
         });
     }
-	public static void makePostRequest(Context context, float v) throws JSONException, UnsupportedEncodingException {
+	public static void makePostRequest(Context context, float v, String t_iso) throws JSONException, UnsupportedEncodingException {
         AsyncHttpClient client = new AsyncHttpClient();
         client.addHeader("Authorization", "Bearer " + Config.global_write_key);
         client.addHeader("Content-Type", "application/json");
         //RequestParams params = new RequestParams("v", v);
         JSONObject jsonParams = new JSONObject();
         jsonParams.put("v", v);
+        jsonParams.put("t", t_iso);
         StringEntity entity = new StringEntity(jsonParams.toString());
         String url = Config.apiPrefix + "/" + "datastreams/temp/datapoints";
         client.post(context, url, entity, "application/json", new AsyncHttpResponseHandler() {
