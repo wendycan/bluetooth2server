@@ -1,4 +1,4 @@
-bt-server
+bluetooth2server
 =========
 ##bluetooth 
 ##server
